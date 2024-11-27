@@ -1,0 +1,29 @@
+
+
+services:
+  postgres-infra:
+    container_name: postgres-infra
+    image: postgres:15.2
+    volumes:
+      - postgres_infra_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: infra
+      POSTGRES_USER: infra
+      POSTGRES_PASSWORD: infra@123
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: django-web
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-infra
+
+volumes:
+  postgres_infra_data: {}
+
